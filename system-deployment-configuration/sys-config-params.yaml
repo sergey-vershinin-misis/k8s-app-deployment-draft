@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sys-config-params
+data:
+  db-host: db-host
+  db-port: db-port
+  broker-host: broker-host
+  broker-port: broker-port

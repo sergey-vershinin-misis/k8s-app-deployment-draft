@@ -1,0 +1,42 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: view-refresher
+spec:
+  schedule: "0 0 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: view-refresher
+            image: company-name/view-refresher
+            env:
+              - name: DB_USERNAME
+                valueFrom:
+                  secretKeyRef:
+                    name: sys-secrets
+                    key: db-username
+              - name: DB_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: sys-secrets
+                    key: db-password
+              - name: DB_HOST
+                valueFrom:
+                  configMapKeyRef:
+                    name: sys-config-params
+                    key: db-host
+              - name: DB_PORT
+                valueFrom:
+                  configMapKeyRef:
+                    name: sys-config-params
+                    key: db-port
+            resources:
+              limits:
+                cpu: "200m"
+                memory: "128Mi"
+              requests:
+                cpu: "300m"
+                memory: "256i"
+          restartPolicy: OnFailure

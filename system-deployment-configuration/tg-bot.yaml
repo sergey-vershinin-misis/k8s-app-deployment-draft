@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tg-bot
+  labels:
+    app: tg-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tg-bot
+  template:
+    metadata:
+      labels:
+        app: tg-bot
+    spec:
+      containers:
+        - name: tg-bot
+          image: company-name/tg-bot
+          env:
+            - name: TELEGRAM_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: sys-secrets
+                  key: telegram-bot-token
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: sys-secrets
+                  key: db-username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sys-secrets
+                  key: db-password
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: sys-config-params
+                  key: db-host
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: sys-config-params
+                  key: db-port
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 250m
+              memory: 512Mi
+      restartPolicy: Always

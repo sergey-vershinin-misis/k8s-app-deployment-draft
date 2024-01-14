@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-collector
+  labels:
+    app: data-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-collector
+  template:
+    metadata:
+      labels:
+        app: data-collector
+    spec:
+      containers:
+        - name: data-collector
+          image: company-name/data-collector
+          env:
+            - name: DADATA_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sys-secrets
+                  key: dadata-api-key
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: sys-secrets
+                  key: db-username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sys-secrets
+                  key: db-password
+            - name: BROKER_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: sys-secrets
+                  key: broker-username
+            - name: BROKER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sys-secrets
+                  key: broker-password
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: sys-config-params
+                  key: db-host
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: sys-config-params
+                  key: db-port
+            - name: BROKER_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: sys-config-params
+                  key: broker-host
+            - name: BROKER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: sys-config-params
+                  key: broker-port
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1024Mi
+            limits:
+              cpu: 800m
+              memory: 2048Mi
+      restartPolicy: Always
